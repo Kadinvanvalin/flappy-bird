@@ -1,5 +1,21 @@
 use bracket_lib::prelude::*;
 
+struct Obstacle {
+    x: i32,
+    gap_y: i32,
+    size: i32,
+}
+
+impl Obstacle {
+    fn new(x: i32, score: i32) -> Self {
+        let mut random = RandomNumberGenerator::new();
+        Obstacle { x,
+            gap_y: random.range(10, 40),
+            size: i32::max(2, 20 - score)
+        }
+    }
+}
+
 struct State {
     player: Player,
     frame_time: f32,
@@ -21,9 +37,11 @@ impl Player {
             velocity: 0.0,
         }
     }
+    
     fn flap(&mut self) {
         self.velocity = -2.0;
     }
+
     fn render(&mut self, ctx: &mut BTerm) {
         ctx.set(0, self.y, YELLOW, BLACK, to_cp437('@'));
     }
@@ -40,6 +58,7 @@ impl Player {
         }
     }
 }
+
 impl State {
     fn new() -> Self {
         State {
@@ -104,11 +123,13 @@ impl State {
         }    
     }
 }
+
 enum GameMode {
     Menu,
     Playing,
     End,
 }
+
 const SCREEN_WIDTH : i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
 const FRAME_DURATION : f32 = 75.0;
@@ -122,6 +143,7 @@ impl GameState for State {
         }
     }
 }
+
 fn main() -> BError {
     let context = BTermBuilder::simple80x50()
         .with_title("Flappy Bird")
